@@ -46,47 +46,6 @@ class TodoService
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  array  $attributtes
-     * @param  int  $id
-     * @param  int  $userId
-     * @return array
-     */
-    public function update(array $attributtes, int $id, int $userId)
-    {
-        DB::beginTransaction();
-        try {
-            $todo = $this->repository->find($id);
-
-            // Verificar se TODO é do usuário
-            if ($todo->user_id !== $userId) {
-                DB::rollback();
-                return [
-                    'success' => false,
-                    'message' => 'Erro ao encontrar TODO'
-                ];
-            }
-
-            $this->repository->update($attributtes, $id);
-        } catch (\Throwable $th) {
-            DB::rollback();
-            logger()->error($th);
-            return [
-                'success' => false,
-                'message' => 'Erro ao editar TODO'
-            ];
-        }
-
-        DB::commit();
-        return [
-            'success' => true,
-            'message' => 'TODO editado com sucesso',
-            'data' => $todo->fresh()
-        ];
-    }
-
-    /**
      * Complete the specified resource in storage.
      *
      * @param  int  $id

@@ -6,7 +6,6 @@ use App\Models\Todo;
 use App\Services\TodoService;
 use App\Repositories\TodoRepository;
 use App\Http\Requests\StoreTodoRequest;
-use App\Http\Requests\UpdateTodoRequest;
 
 class TodoController extends Controller
 {
@@ -67,47 +66,6 @@ class TodoController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Todo  $todo
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Todo $todo)
-    {
-        $user = auth()->user();
-        if ($todo->user_id !== $user->id) {
-            abort(404);
-        }
-
-        return view('todos.edit', compact('user', 'todo'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateTodoRequest  $request
-     * @param  \App\Models\Todo  $todo
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateTodoRequest $request, Todo $todo)
-    {
-        $user = auth()->user();
-
-        $attributes = $request->only([
-            'title',
-            'description',
-            'color'
-        ]);
-
-        $response = $this->service->update($attributes, $todo->id, $user->id);
-        if (!$response['success']) {
-            return redirect('/todos/edit/' . $todo->id)->with('error', $response['message']);
-        }
-
-        return redirect('/dashboard')->with('success', $response['message']);
-    }
-
-    /**
      * Complete the specified resource in storage.
      *
      * @param  \App\Models\Todo  $todo
@@ -133,8 +91,6 @@ class TodoController extends Controller
      */
     public function destroy(Todo $todo)
     {
-        $user = auth()->user();
-
         $response = $this->service->destroy($todo->id, $user->id);
 
         return redirect('/dashboard')->with(

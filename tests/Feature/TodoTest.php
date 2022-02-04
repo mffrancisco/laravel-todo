@@ -88,6 +88,27 @@ class TodoTest extends TestCase
     }
 
     /**
+     * Teste deve abrir dashboard e ver a palavra 'Tarefas'
+     *
+     * @return void
+     */
+    public function testOpenDashboardAndSeeTarefas()
+    {
+        // Criar dados falsos
+        $data = $this->dataProvider(1, 3);
+        
+        // Pegar dados do primeiro usuário
+        $user = $data['users'][0];
+        $this->actingAs($user);
+
+        // Acessar a rota /dashboard
+        $response = $this->get('/dashboard');
+
+        // Verificar se aparece a frase 'Tarefas'
+        $response->assertSee('Tarefas');
+    }
+
+    /**
      * Teste deve abrir dashboard e ver quantas tarefas estão ativas
      *
      * @return void
